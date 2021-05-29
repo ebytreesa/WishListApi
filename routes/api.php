@@ -14,7 +14,7 @@ use App\Http\Controllers\WishController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('/wishes', 'WishController@index');
+Route::get('wishes', [WishController::class,'index']);
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
