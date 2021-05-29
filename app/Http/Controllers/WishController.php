@@ -35,4 +35,29 @@ class WishController extends Controller
         ];
         return response()->json($response,201);
     }
+
+    public function update(Request $request, $id)
+    {
+      $wish = Wish::find($id) ;
+      $input = $request->all();
+      $validator = Validator::make($input, [
+        'title' => 'required',
+        'description' => 'required',
+        'link' => 'required' 
+      ]);
+
+      if($validator->fails())
+      {
+        return response()->json(['error' => $validator->errors()]);
+      }        
+
+        $wish->update($input);
+
+        $response = [
+            'success' => true,
+            'message' => 'Data updated successfully',
+            'data' => $wish
+        ];
+        return response()->json($response,200);
+    }
 }
