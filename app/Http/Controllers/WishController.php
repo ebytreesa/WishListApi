@@ -19,12 +19,8 @@ class WishController extends Controller
 
     public function create(Request $request)
     {
-      $input = $request->all();
-      $validator = Validator::make($input, [
-        'title' => 'required',
-        'description' => 'required',
-        'link' => 'required' 
-      ]);
+      $input = $request->all();    
+      $validator = $this->validateData($input);
       if($validator->fails())
       {
         return response()->json(['error' => $validator->errors()], 200);
@@ -44,12 +40,8 @@ class WishController extends Controller
     public function update(Request $request, $id)
     {
       $wish = Wish::find($id) ;
-      $input = $request->all();
-      $validator = Validator::make($input, [
-        'title' => 'required',
-        'description' => 'required',
-        'link' => 'required' 
-      ]);
+      $input = $request->all();    
+      $validator = $this->validateData($input);
 
       if($validator->fails())
       {
@@ -75,5 +67,16 @@ class WishController extends Controller
             'success' => true,
             'message' => 'Product deleted successfully'
         ], 204);
+    }
+
+
+    private function validateData($input)
+    {
+        $validator = Validator::make($input, [
+            'title' => 'required',
+            'description' => 'required',
+            'link' => 'required' 
+          ]);
+        return $validator;
     }
 }
