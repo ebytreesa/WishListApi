@@ -12,19 +12,21 @@ class WishController extends Controller
     // Get all wishes
     public function index()
     {
-        return Wish::all();
+        $wishes = Wish::all();       
+        return $this->successResponse($wishes, 'Data retrieved successfully', 200);       
     }
 
     // Create wish
 
     public function create(Request $request)
     {
-      $input = $request->all();    
-      $validator = $this->validateData($input);
-      if($validator->fails())
-      {
-        return response()->json(['error' => $validator->errors()], 200);
-      }        
+        $input = $request->all();    
+        $validator = $this->validateData($input);
+        if($validator->fails())
+        {
+            return $this->errorResponse('Validation error',  $validator->errors());
+            //return response()->json(['error' => $validator->errors()]);
+        }        
 
         $wish = Wish::Create($input);
         $response = [
@@ -32,41 +34,36 @@ class WishController extends Controller
             'message' => 'Data created successfully',
             'data' => $wish
         ];
-        return response()->json($response,201);
+        return $this->successResponse($wish, 'Data created successfully', 201);
+       
     }
 
     // Update wish
 
     public function update(Request $request, $id)
     {
-      $wish = Wish::find($id) ;
-      $input = $request->all();    
-      $validator = $this->validateData($input);
+        $wish = Wish::find($id) ;
+        $input = $request->all();    
+        $validator = $this->validateData($input);
 
-      if($validator->fails())
-      {
-        return response()->json(['error' => $validator->errors()]);
-      }        
+        if($validator->fails())
+        {
+            return $this->errorResponse('Validation error',  $validator->errors());
+          // return response()->json(['error' => $validator->errors()]);
+        }        
 
         $wish->update($input);
 
-        $response = [
-            'success' => true,
-            'message' => 'Data updated successfully',
-            'data' => $wish
-        ];
-        return response()->json($response,200);
+        return $this->successResponse($wish, 'Data updated successfully', 200);
     }
 
-    // delete wish
+    // Delete wish
 
     public function destroy($id)
     {
         Wish::destroy($id);
-        return response()->json([
-            'success' => true,
-            'message' => 'Product deleted successfully'
-        ], 204);
+        return $this->successResponse([], 'Data deleted successfully', 204);       
+        
     }
 
 
@@ -78,5 +75,30 @@ class WishController extends Controller
             'link' => 'required' 
           ]);
         return $validator;
+    }
+
+    private function successResponse($data, $message, $code = 200)
+    {
+        $response = [
+            'success' => true,
+            'data'    => $data,
+            'message' => $message,
+        ];
+
+        return response()->json($response, $code);
+    }
+
+    private function errorResponse($error, $errorMessages = [], $code = 404)
+    {
+        $response = [
+            'success' => false,
+            'message' => $error,
+        ];
+
+        if(!empty($errorMessages)){
+            $response['error'] = $errorMessages;
+        }
+
+        return response()->json($response, $code);
     }
 }
