@@ -15,6 +15,7 @@ use App\Http\Controllers\WishController;
 |
 */
 Route::get('wishes', [WishController::class,'index']);
+Route::post('wishes', [WishController::class,'create']);
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
