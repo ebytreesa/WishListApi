@@ -16,7 +16,9 @@ use App\Http\Controllers\WishController;
 */
 Route::get('wishes', [WishController::class,'index']);
 Route::post('wishes', [WishController::class,'create']);
-Route::put('wishes/{id}', [WishController::class,'update/{id}']);
+Route::put('wishes/{id}', [WishController::class,'update']);
+Route::delete('wishes/{id}', [WishController::class,'destroy']);
+
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

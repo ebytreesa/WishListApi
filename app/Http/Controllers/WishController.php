@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Validator;
 
 class WishController extends Controller
 {
+    // Get all wishes
     public function index()
     {
         return Wish::all();
     }
+
+    // Create wish
 
     public function create(Request $request)
     {
@@ -35,6 +38,8 @@ class WishController extends Controller
         ];
         return response()->json($response,201);
     }
+
+    // Update wish
 
     public function update(Request $request, $id)
     {
@@ -59,5 +64,16 @@ class WishController extends Controller
             'data' => $wish
         ];
         return response()->json($response,200);
+    }
+
+    // delete wish
+
+    public function destroy($id)
+    {
+        Wish::destroy($id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Product deleted successfully'
+        ], 204);
     }
 }
