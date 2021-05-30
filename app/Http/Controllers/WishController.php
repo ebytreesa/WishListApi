@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Wish;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -12,7 +13,13 @@ class WishController extends Controller
     // Get all wishes
     public function index()
     {
-        $wishes = Wish::all();       
+        try
+        {
+            $wishes = Wish::all();       
+        }
+        catch(Exception $ex){
+            return $this->errorResponse('DB error', $ex);
+        }
         return $this->successResponse($wishes, 'Data retrieved successfully', 200);       
     }
 
@@ -26,14 +33,15 @@ class WishController extends Controller
         {
             return $this->errorResponse('Validation error',  $validator->errors());
             //return response()->json(['error' => $validator->errors()]);
+        }     
+        try
+        {
+            $wish = Wish::Create($input);
+        }
+        catch(Exception $ex)
+        {
+            return $this->errorResponse('DB error', $ex);
         }        
-
-        $wish = Wish::Create($input);
-        $response = [
-            'success' => true,
-            'message' => 'Data created successfully',
-            'data' => $wish
-        ];
         return $this->successResponse($wish, 'Data created successfully', 201);
        
     }
@@ -51,8 +59,13 @@ class WishController extends Controller
             return $this->errorResponse('Validation error',  $validator->errors());
           // return response()->json(['error' => $validator->errors()]);
         }        
-
-        $wish->update($input);
+        try{
+            $wish->update($input);
+        }
+        catch(Exception $ex)
+        {
+            return $this->errorResponse('DB error', $ex);
+        }  
 
         return $this->successResponse($wish, 'Data updated successfully', 200);
     }
@@ -61,7 +74,14 @@ class WishController extends Controller
 
     public function destroy($id)
     {
-        Wish::destroy($id);
+        try
+        {
+            Wish::destroy($id);
+        }
+        catch(Exception $ex)
+        {
+            return $this->errorResponse('DB error', $ex);
+        }  
         return $this->successResponse([], 'Data deleted successfully', 204);       
         
     }
